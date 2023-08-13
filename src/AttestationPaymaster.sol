@@ -4,8 +4,8 @@ pragma solidity ^0.8.13;
 import { BasePaymaster } from "account-abstraction/core/BasePaymaster.sol";
 import { IEntryPoint } from "account-abstraction/interfaces/IEntryPoint.sol";
 import { UserOperation } from "account-abstraction/interfaces/UserOperation.sol";
-import { IEAS } from "eas-contracts/IEAS.sol";
-import { Attestation } from "eas-contracts/Common.sol";
+import { IEAS } from "./interfaces/IEAS.sol";
+import { Attestation } from "./interfaces/Common.sol";
 
 import "forge-std/console.sol";
 
@@ -37,7 +37,7 @@ contract AttestationPaymaster is BasePaymaster {
         // Check if the attestation is valid
         require(eas.isAttestationValid(uid), "Attestation is not valid");
 
-        Attestation attestation = eas.getAttestation(uid);
+        Attestation memory attestation = eas.getAttestation(uid);
         require(attestation.recipient == userOp.sender, "Sender is not attested");
     }
 
@@ -58,7 +58,7 @@ contract AttestationPaymaster is BasePaymaster {
         }
     }
 
-    function parsePaymasterAndData(bytes calldata paymasterAndData) public pure returns (bytes32 memory uid, bool isOffChain) {
+    function parsePaymasterAndData(bytes calldata paymasterAndData) public pure returns (bytes32 uid, bool isOffChain) {
         (uid, isOffChain) = abi.decode(paymasterAndData[20:], (bytes32, bool));
     }
     
